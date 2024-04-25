@@ -10,6 +10,20 @@ from lib.artist import Artist
 app = Flask(__name__)
 
 # == Your Routes Here ==
+@app.route('/albums', methods=['GET'])
+def return_albums():
+    connection = get_flask_database_connection(app)
+    repository = AlbumRepository(connection)
+    albums = repository.all()
+    return render_template("albums/index.html", albums=albums)
+
+@app.route('/albums/<int:id>', methods = ['GET'])
+def return_an_album(id):
+    connection = get_flask_database_connection(app)
+    repository = AlbumRepository(connection)
+    album = repository.find(id)
+    return render_template("albums/album_id.html", album=album)
+
 @app.route('/albums', methods=['POST'])
 def add_album():
     connection = get_flask_database_connection(app)
@@ -20,18 +34,6 @@ def add_album():
     new_album = Album(None, request.form['title'],request.form['release_year'], request.form['artist_id'])
     repository.create(new_album)
     return f"{request.form['title']} ({request.form['release_year']}) has been added!"
-
-@app.route('/albums', methods=['GET'])
-def return_albums():
-
-    connection = get_flask_database_connection(app)
-    repository = AlbumRepository(connection)
-    return str(repository.all())
-    # albums = repository.all()
-    # album_list = [{'id': album.id, 'title': album.title, 'release_year': album.release_year, 'artist_id': album.artist_id} for album in albums]
-    # print("hereeee")
-    # print(album_list)
-    # return album_list
 
 @app.route('/albums/<int:id>', methods=['DELETE'])
 def delete_album_by_id(id):
@@ -65,25 +67,6 @@ def delete_artist_by_id(id):
     repository.delete(id)
     return f"Artist with id = {id} has been successfully deleted"
 
-# == Example Code Below ==
-
-# GET /emoji
-# Returns a smiley face in HTML
-# Try it:
-#   ; open http://localhost:5001/emoji
-@app.route('/emoji', methods=['GET'])
-def get_emoji():
-    # We use `render_template` to send the user the file `emoji.html`
-    # But first, it gets processed to look for placeholders like {{ emoji }}
-    # These placeholders are replaced with the values we pass in as arguments
-    return render_template('emoji.html', emoji=':)')
-
-# This imports some more example routes for you to see how they work
-# You can delete these lines if you don't need them.
-from example_routes import apply_example_routes
-apply_example_routes(app)
-
-# == End Example Code ==
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
