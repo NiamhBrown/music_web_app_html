@@ -9,8 +9,11 @@
     <h1>Albums</h1>
     {%for album in albums%}
     <div>
-      <a href = "/albums/{{album.id}}">{{album.title}} ({{album.release_year}})</a>
+      <a href = "/albums/{{album.id}}" class="t-album-link">{{album.title}} ({{album.release_year}})</a>
     </div>
     {% endfor %}
+    <br>
+    <a href="/albums/new">Add a new album</a>
+
 </body>
 </html>

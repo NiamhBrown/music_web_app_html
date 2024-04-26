@@ -3,8 +3,8 @@ from playwright.sync_api import Page, expect
 def test_return_albums(page, test_web_address, db_connection):
     db_connection.seed("seeds/music_library.sql")
     page.goto(f"http://{test_web_address}/albums")
-    link_tags = page.locator("a")
-    expect(link_tags).to_have_text(["title1 (1111)", "title2 (2222)"])
+    album_link_tags = page.locator("a.t-album-link")
+    expect(album_link_tags).to_have_text(["title1 (1111)", "title2 (2222)"])
 
 def test_return_an_album_with_id(page, test_web_address, db_connection):
     db_connection.seed('seeds/music_library.sql')
@@ -14,6 +14,33 @@ def test_return_an_album_with_id(page, test_web_address, db_connection):
     expect(h2_tags).to_have_text(["title1"])
     expect(para_tags).to_have_text(["Released: 1111"])
 
+def test_create_new_album(page, test_web_address, db_connection):
+    db_connection.seed('seeds/music_library.sql')
+    page.goto(f"http://{test_web_address}/albums")
+    page.click("text='Add a new album'")
+
+    page.fill("input[name='title']", 'title3')
+    page.fill("input[name='release_year']", '3333')
+    page.click("text='Add album'")
+
+    h2_tags = page.locator("h2")
+    para_tags = page.locator("p")
+    expect(h2_tags).to_have_text(["title3"])
+    expect(para_tags).to_have_text(["Released: 3333"])
+
+def test_create_new_album_errors(page, test_web_address, db_connection):
+    db_connection.seed('seeds/music_library.sql')
+    page.goto(f"http://{test_web_address}/albums")
+    page.click("text='Add a new album'")
+
+    page.fill("input[name='title']", '')
+    page.fill("input[name='release_year']", '3333')
+    page.click("text='Add album'")
+
+    error_text = page.locator(".t-error-text")
+    expect(error_text).to_have_text("Title can't be blank")
+
+# artists
 def test_return_artists(page, test_web_address, db_connection):
     db_connection.seed('seeds/music_library.sql')
     page.goto(f"http://{test_web_address}/artists")
