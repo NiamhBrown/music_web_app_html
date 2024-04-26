@@ -24,6 +24,23 @@ def return_an_album(id):
     album = repository.find(id)
     return render_template("albums/album_id.html", album=album)
 
+@app.route('/artists', methods=['GET'])
+def return_artists():
+    connection = get_flask_database_connection(app)
+    repository = ArtistRepository(connection)
+    artists= repository.all()
+    return render_template("artists/index.html", artists=artists)
+
+@app.route('/artists/<int:id>', methods = ['GET'])
+def return_an_artist(id):
+    connection = get_flask_database_connection(app)
+    repository = ArtistRepository(connection)
+    artist = repository.find(id)
+    return render_template("artists/artist_id.html", artist=artist)
+
+# HEREEEEEE is where i'm up to (with adding html rendering)
+
+
 @app.route('/albums', methods=['POST'])
 def add_album():
     connection = get_flask_database_connection(app)
@@ -42,12 +59,12 @@ def delete_album_by_id(id):
     repository.delete(id)
     return f"Album with id = {id} has been successfully deleted"
 
-@app.route('/artists', methods=['GET'])
-def return_artists():
+# @app.route('/artists', methods=['GET'])
+# def return_artists():
 
-    connection = get_flask_database_connection(app)
-    repository = ArtistRepository(connection)
-    return str(repository.all())
+#     connection = get_flask_database_connection(app)
+#     repository = ArtistRepository(connection)
+#     return str(repository.all())
 
 @app.route('/artists', methods=['POST'])
 def add_artist():

@@ -3,10 +3,8 @@ from playwright.sync_api import Page, expect
 def test_return_albums(page, test_web_address, db_connection):
     db_connection.seed("seeds/music_library.sql")
     page.goto(f"http://{test_web_address}/albums")
-    h2_tags = page.locator("h2")
-    para_tags = page.locator("p")
-    expect(h2_tags).to_have_text(["title1", "title2"])
-    expect(para_tags).to_have_text(["Released: 1111", "Released: 2222"])
+    link_tags = page.locator("a")
+    expect(link_tags).to_have_text(["title1 (1111)", "title2 (2222)"])
 
 def test_return_an_album_with_id(page, test_web_address, db_connection):
     db_connection.seed('seeds/music_library.sql')
@@ -15,6 +13,23 @@ def test_return_an_album_with_id(page, test_web_address, db_connection):
     para_tags = page.locator("p")
     expect(h2_tags).to_have_text(["title1"])
     expect(para_tags).to_have_text(["Released: 1111"])
+
+def test_return_artists(page, test_web_address, db_connection):
+    db_connection.seed('seeds/music_library.sql')
+    page.goto(f"http://{test_web_address}/artists")
+    link_tags = page.locator("a")
+    expect(link_tags).to_have_text(['Pixies (Rock)', 'ABBA (Pop)', 'Taylor Swift (Pop)', 'Nina Simone (Jazz)'])
+
+def test_return_an_artist_with_id(page, test_web_address, db_connection):
+    db_connection.seed('seeds/music_library.sql')
+    page.goto(f"http://{test_web_address}/artists/1")
+    h2_tags = page.locator("h2")
+    para_tags = page.locator("p")
+    expect(h2_tags).to_have_text(["Pixies"])
+    expect(para_tags).to_have_text(["Genre: Rock"])
+
+
+# HEREEEEEE is where i'm up to (with adding html rendering)
 
 # POST /albums
 # parameters:
